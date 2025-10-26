@@ -60,9 +60,6 @@ void start_kernel() {
     print_string("Initializing keyboard (IRQ 1).\n");
     init_keyboard();
 
-    print_string("Initializing fuckFAT.\n");
-    init_fuckFAT();
-
     print_string("Initializing dynamic memory.\n");
     init_dynamic_mem();
 

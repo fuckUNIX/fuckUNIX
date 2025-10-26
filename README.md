@@ -1,4 +1,5 @@
 # fuckUNIX
+<<<<<<< HEAD
 
 ## Description
 
@@ -64,3 +65,6 @@ In GDB shell:
 - [The Little Book About OS Development](https://littleosbook.github.io/)
 - [C Memory Allocation Functions](http://www.sunshine2k.de/articles/coding/cmemalloc/cmemory.html)
 - [FrOS](https://github.com/FRosner/FrOS)
+=======
+A small OS based on FrOS by FRosner
+>>>>>>> a7afdb0abe2a785f22a95eecacda093563e68f2e

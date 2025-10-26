@@ -103,9 +103,8 @@ void start_kernel() {
     print_dynamic_mem();
     print_nl();
 
-    print_banner();
-    print_string("\n");
-    print_string("> ");
+    //print_banner();
+    terminal_init();
 }
 
 // kernel api start
@@ -149,7 +148,7 @@ void kpanic(char *reason) {
 // UNIMPLEMENTED
 void klaunch(int app) {
     if (app == 1) {
-        
+        terminal_init();
     }
 }
 

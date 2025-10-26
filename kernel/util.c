@@ -59,3 +59,11 @@ int compare_string(char s1[], char s2[]) {
     }
     return s1[i] - s2[i];
 }
+
+int strlen(char *str) {
+    int len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
+}

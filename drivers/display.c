@@ -23,6 +23,29 @@ void print_hex(uint8_t *data, int length) {
     }
 }
 
+// prints the text but in a box
+void print_boxed(char *text) {
+    int len = strlen(text);
+
+    // Print top border
+    for (int i = 0; i < len + 4; i++) {
+        print_string("-");
+    }
+    print_nl();
+
+    // Print middle line with text
+    print_string("| ");
+    print_string(text);
+    print_string(" |");
+    print_nl();
+
+    // Print bottom border
+    for (int i = 0; i < len + 4; i++) {
+        print_string("-");
+    }
+    print_nl();
+}
+
 void set_cursor(int offset) {
     offset /= 2;
     port_byte_out(REG_SCREEN_CTRL, 14);

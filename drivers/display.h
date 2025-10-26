@@ -24,3 +24,5 @@ void print_backspace();
 // new hex print declarations
 void print_hex_byte(uint8_t b);
 void print_hex(uint8_t *data, int length);
+
+void print_boxed(char *text);

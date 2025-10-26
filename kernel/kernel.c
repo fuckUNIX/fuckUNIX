@@ -10,7 +10,10 @@
 #include "util.h"
 #include "mem.h"
 
+#include "../apps/apps.h"
+
 #define boot_banner "--------------------------\n Welcome to fuckUNIX 1.0 \n--------------------------"
+#define PANIC_BUF_SIZE 128
 
 void* alloc(int n) {
     int *ptr = (int *) mem_alloc(n * sizeof(int));
@@ -106,10 +109,48 @@ void start_kernel() {
 }
 
 // kernel api start
+void khalt() {
+    asm volatile("hlt");
+}
 
 void kpoweroff() {
     print_string("Powering off the PC\n"); // TODO Implement ACPI
-    asm volatile("hlt");
+    khalt();
+}
+
+void kpanic(char *reason) {
+    char buffer[PANIC_BUF_SIZE];
+    int i = 0;
+
+    // Copy fixed string
+    char *fixed = "KERNEL PANIC!!!!! REASON: ";
+    while (fixed[i] != '\0') {
+        buffer[i] = fixed[i];
+        i++;
+    }
+
+    // Copy reason string
+    int j = 0;
+    while (reason[j] != '\0' && i < PANIC_BUF_SIZE - 1) {
+        buffer[i] = reason[j];
+        i++;
+        j++;
+    }
+
+    buffer[i] = '\0'; // null-terminate
+
+    clear_screen();
+    print_boxed(buffer);
+    khalt();
+}
+
+
+// each app has its own value so for example terminal is 1 and music is 2
+// UNIMPLEMENTED
+void klaunch(int app) {
+    if (app == 1) {
+        
+    }
 }
 
 void execute_command(char *input) {
@@ -118,6 +159,9 @@ void execute_command(char *input) {
     }
     else if (compare_string(input, "") == 0) {
         print_string("\n> ");
+    }
+    else if (compare_string(input, "PANIC") == 0) {
+        kpanic("User initiated panic!");
     }
     else if (compare_string(input, "ATATEST") == 0) {
         test_ATA();

@@ -16,4 +16,5 @@
 
 void init_fuckFAT() {
     // print_string("Hello fuckFAT and fuckUNIX they suck and i hate them!!!!");
+    // basic stub to be made when i fix the ATA driver.
 };

@@ -19,3 +19,5 @@ void append(char s[], char n);
 int compare_string(char s1[], char s2[]);
 
 void delay(int ticks);
+
+int strlen(char *str);

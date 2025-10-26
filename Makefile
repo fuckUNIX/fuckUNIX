@@ -35,7 +35,7 @@ kernel.elf: boot/kernel_entry.o ${OBJ_FILES}
 
 debug: os-image.bin kernel.elf
 	qemu-system-i386 -s -S -fda os-image.bin -d guest_errors,int &
-	i386-elf-gdb -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
+	x86_64-elf-gdb -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
 
 %.o: %.c ${HEADERS}
 	$(CC) -g -m32 -ffreestanding -fno-pie -fno-stack-protector -c $< -o $@ # -g for debugging

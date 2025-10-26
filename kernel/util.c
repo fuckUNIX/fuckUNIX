@@ -16,6 +16,10 @@ void reverse(char s[]) {
     }
 }
 
+void delay(int ticks) {
+    for(volatile int i = 0; i < ticks * 100000; i++);
+}
+
 void int_to_string(int n, char str[]) {
     int i, sign;
     if ((sign = n) < 0) n = -n;

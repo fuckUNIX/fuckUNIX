@@ -3,8 +3,8 @@
 # $^ = all dependencies
 
 # detect all .o files based on their .c source
-C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c)
-HEADERS = $(wildcard kernel/*.h  drivers/*.h cpu/*.h)
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c fuckFAT/*.c)
+HEADERS = $(wildcard kernel/*.h  drivers/*.h cpu/*.h fuckFAT/*.h)
 OBJ_FILES = ${C_SOURCES:.c=.o cpu/interrupt.o}
 
 CC ?= x86_64-elf-gcc
@@ -20,11 +20,14 @@ kernel.bin: boot/kernel_entry.o ${OBJ_FILES}
 os-image.bin: boot/mbr.bin kernel.bin
 	cat $^ > $@
 
-run: os-image.bin
-	qemu-system-i386 -fda $<
+run: os-image.bin disk.img
+	qemu-system-i386 -fda $< -hda disk.img
 
 echo: os-image.bin
 	xxd $<
+
+disk.img: 
+	qemu-img create -f raw disk.img 512M
 
 # only for debug
 kernel.elf: boot/kernel_entry.o ${OBJ_FILES}

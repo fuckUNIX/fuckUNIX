@@ -4,6 +4,25 @@
 #include "../kernel/mem.h"
 #include "../kernel/util.h"
 
+static char hex_chars[] = "0123456789ABCDEF";
+
+// prints one hex byte
+void print_hex_byte(uint8_t b) {
+    char hex[2];
+    hex[0] = hex_chars[(b >> 4) & 0x0F];
+    hex[1] = hex_chars[b & 0x0F];
+    print_string(hex);
+}
+
+// prints hex data of a certain lenght
+void print_hex(uint8_t *data, int length) {
+    for (int i = 0; i < length; i++) {
+        print_hex_byte(data[i]);
+        print_string(" ");
+        if ((i + 1) % 16 == 0) print_nl();
+    }
+}
+
 void set_cursor(int offset) {
     offset /= 2;
     port_byte_out(REG_SCREEN_CTRL, 14);

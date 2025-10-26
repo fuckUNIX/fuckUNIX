@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #define VIDEO_ADDRESS 0xb8000
 #define MAX_ROWS 25
 #define MAX_COLS 80
@@ -19,3 +20,7 @@ void clear_screen();
 int scroll_ln(int offset);
 
 void print_backspace();
+
+// new hex print declarations
+void print_hex_byte(uint8_t b);
+void print_hex(uint8_t *data, int length);

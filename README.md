@@ -1,8 +1,8 @@
-# FrOS
+# fuckUNIX
 
 ## Description
 
-This is a simple x86 32 bit operating system written from scratch, based on Carlos Fenollosas [OS tutorial](https://github.com/cfenollosa/os-tutorial). It contains the following components:
+This is a simple x86 32 bit operating system written from scratch, based on FrOS by FRosner. It contains the following components:
 
 1. Boot loader
 2. Operating system kernel, including
@@ -63,3 +63,4 @@ In GDB shell:
 - [BrokenThorn Entertainment's Operating System Development Series](http://www.brokenthorn.com/Resources/OSDevIndex.html)
 - [The Little Book About OS Development](https://littleosbook.github.io/)
 - [C Memory Allocation Functions](http://www.sunshine2k.de/articles/coding/cmemalloc/cmemory.html)
+- [FrOS](https://github.com/FRosner/FrOS)

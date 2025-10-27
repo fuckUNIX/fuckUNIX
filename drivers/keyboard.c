@@ -28,28 +28,23 @@ const char sc_ascii[] = {'?', '?', '1', '2', '3', '4', '5', '6',
                          'B', 'N', 'M', ',', '.', '/', '?', '?', '?', ' '};
 
 
-void getlastKey() {
-    return lastKey;
-}
-
 static void keyboard_callback(registers_t *regs) {
     uint8_t scancode = port_byte_in(0x60);
     if (scancode > SC_MAX) return;
-    lastKey sc_ascii[(int) scancode];
-    //if (scancode == BACKSPACE) {
-      //  if (backspace(key_buffer)) {
-        //    print_backspace();
-        //}
-    //} else if (scancode == ENTER) {
-      //  print_nl();
-      // execute_command(key_buffer);
-      //key_buffer[0] = '\0';
-    //} else {
-     //   char letter = sc_ascii[(int) scancode];
-       // append(key_buffer, letter);
-        //char str[2] = {letter, '\0'};
-        //print_string(str);
-    //}
+    if (scancode == BACKSPACE) {
+        if (backspace(key_buffer)) {
+            print_backspace();
+        }
+    } else if (scancode == ENTER) {
+        print_nl();
+        execute_command(key_buffer);
+      key_buffer[0] = '\0';
+    } else {
+        char letter = sc_ascii[(int) scancode];
+        append(key_buffer, letter);
+        char str[2] = {letter, '\0'};
+        print_string(str);
+    }
 }
 
 void init_keyboard() {

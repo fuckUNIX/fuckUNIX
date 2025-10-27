@@ -10,7 +10,6 @@
 #include "util.h"
 #include "mem.h"
 
-#include "../apps/apps.h"
 
 #define boot_banner "--------------------------\n Welcome to fuckUNIX 1.0 \n--------------------------"
 #define PANIC_BUF_SIZE 128
@@ -103,9 +102,10 @@ void start_kernel() {
     print_dynamic_mem();
     print_nl();
 
-    //print_banner();
-    terminal_init();
+    print_banner();
+    print_string("\n>");
 }
+
 
 // kernel api start
 void khalt() {
@@ -141,15 +141,6 @@ void kpanic(char *reason) {
     clear_screen();
     print_boxed(buffer);
     khalt();
-}
-
-
-// each app has its own value so for example terminal is 1 and music is 2
-// UNIMPLEMENTED
-void klaunch(int app) {
-    if (app == 1) {
-        terminal_init();
-    }
 }
 
 void execute_command(char *input) {

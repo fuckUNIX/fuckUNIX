@@ -3,9 +3,9 @@
 #include "../cpu/timer.h"
 #include "../drivers/display.h"
 #include "../drivers/keyboard.h"
-#include "../fuckFAT/fuckFAT.h"
+//#include "../fuckFAT/fuckFAT.h"
 
-#include "../drivers/ide.h"
+#include "disktest.h"
 
 #include "util.h"
 #include "mem.h"
@@ -35,15 +35,7 @@ void* alloc(int n) {
 }
 
 void test_ATA() {
-    uint8_t sector[512]; // define a sector aka 512 bytes of data per each sector
-    ata_read_sector(0, sector); // read sector 0
-
-    print_string("Sector 0 read:\n"); // let the user know it read the sector
-    //for (int i = 0; i < 512; i++) {
-    //    print_hex(sector[i]);
-    //    if (i % 16 == 15) print_string("\n");
-    // }
-    print_hex(sector, 512); // replaced the above with one line, prints out the sector's hex
+    test_disk();
 }
 
 // prints the boot banner stored in the boot_banner variable
@@ -64,6 +56,9 @@ void start_kernel() {
 
     print_string("Initializing dynamic memory.\n");
     init_dynamic_mem();
+
+    print_string("Starting timer.\n");
+    init_timer(100);
 
     clear_screen();
 

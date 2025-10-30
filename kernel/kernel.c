@@ -1,11 +1,18 @@
-#include "../cpu/idt.h"
+// kernel/kernel.c
+
+///////////////////////////////////////////////////////
+//                                                   //
+//                 KERNEL.C                          //
+//  This is the core kernel file, it loads basic     //
+//  drivers and hands off to the userspace.          //
+//                                                   //
+///////////////////////////////////////////////////////
+
 #include "../cpu/isr.h"
-#include "../cpu/timer.h"
 #include "../drivers/display.h"
 #include "../drivers/keyboard.h"
-//#include "../fuckFAT/fuckFAT.h"
 
-#include "disktest.h"
+#include "fuckUNIX.h"
 
 #include "util.h"
 #include "mem.h"
@@ -14,37 +21,13 @@
 #define boot_banner "--------------------------\n Welcome to fuckUNIX 1.0 \n--------------------------"
 #define PANIC_BUF_SIZE 128
 
-void* alloc(int n) {
-    int *ptr = (int *) mem_alloc(n * sizeof(int));
-    if (ptr == NULL_POINTER) {
-        print_string("Memory not allocated.\n");
-    } else {
-        // Get the elements of the array
-        for (int i = 0; i < n; ++i) {
-//            ptr[i] = i + 1; // shorthand for *(ptr + i)
-        }
-
-        for (int i = 0; i < n; ++i) {
-//            char str[256];
-//            int_to_string(ptr[i], str);
-//            print_string(str);
-        }
-//        print_nl();
-    }
-    return ptr;
-}
-
-void test_ATA() {
-    test_disk();
-}
-
 // prints the boot banner stored in the boot_banner variable
 void print_banner() { 
     print_string(boot_banner);
 }
 
-void start_kernel() {
-    clear_screen();
+// runs all the functions like init_keyboard()
+void load_drivers() {
     print_string("Installing interrupt service routines (ISRs).\n");
     isr_install();
 
@@ -56,12 +39,10 @@ void start_kernel() {
 
     print_string("Initializing dynamic memory.\n");
     init_dynamic_mem();
+    // done!!
+}
 
-    print_string("Starting timer.\n");
-    init_timer(100);
-
-    clear_screen();
-
+void alloc_memory() {
     print_string("init_dynamic_mem()\n");
     print_dynamic_node_size();
     print_dynamic_mem();
@@ -96,23 +77,34 @@ void start_kernel() {
     print_string("mem_free(ptr3)\n");
     print_dynamic_mem();
     print_nl();
+}
 
-    print_banner();
+// core kernel function
+void start_kernel() {
+    clear_screen(); // clears the screen
+
+    load_drivers(); // loads all the drivers
+
+    alloc_memory(); // allocate memory
+
+    clear_screen(); // clears again
+
+    print_banner(); // prints banner
     print_string("\n>");
 }
 
 
 // kernel api start
-void khalt() {
-    asm volatile("hlt");
-}
+//void khalt() {
+//    asm volatile("hlt");
+//}
 
-void kpoweroff() {
-    print_string("Powering off the PC\n"); // TODO Implement ACPI
-    khalt();
-}
+//void kpoweroff() {
+//    print_string("Powering off the PC\n"); // TODO Implement ACPI
+//    khalt();
+//}
 
-void kpanic(char *reason) {
+/*void kpanic(char *reason) {
     char buffer[PANIC_BUF_SIZE];
     int i = 0;
 
@@ -136,21 +128,17 @@ void kpanic(char *reason) {
     clear_screen();
     print_boxed(buffer);
     khalt();
-}
+}*/
 
+// do not use right now as in the future it will be removed!!
 void execute_command(char *input) {
     if (compare_string(input, "EXIT") == 0) {
-        kpoweroff();
+        // stub!!
+        print_string("Not implemented!!!");
+        print_string("\n> ");
     }
     else if (compare_string(input, "") == 0) {
         print_string("\n> ");
-    }
-    else if (compare_string(input, "PANIC") == 0) {
-        kpanic("User initiated panic!");
-    }
-    else if (compare_string(input, "ATATEST") == 0) {
-        test_ATA();
-        print_string("\n>");
     }
     else {
         print_string("Unknown command: ");
@@ -158,3 +146,5 @@ void execute_command(char *input) {
         print_string("\n> ");
     }
 }
+
+// kernel api end

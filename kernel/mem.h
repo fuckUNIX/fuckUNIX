@@ -16,3 +16,5 @@ void print_dynamic_mem();
 void *mem_alloc(size_t size);
 
 void mem_free(void *p);
+
+void* alloc(int n);

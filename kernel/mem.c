@@ -174,3 +174,23 @@ void mem_free(void *p) {
     current_mem_node = merge_next_node_into_current(current_mem_node);
     merge_current_node_into_previous(current_mem_node);
 }
+
+void* alloc(int n) {
+    int *ptr = (int *) mem_alloc(n * sizeof(int));
+    if (ptr == NULL_POINTER) {
+        print_string("Memory not allocated.\n");
+    } else {
+        // Get the elements of the array
+        for (int i = 0; i < n; ++i) {
+//            ptr[i] = i + 1; // shorthand for *(ptr + i)
+        }
+
+        for (int i = 0; i < n; ++i) {
+//            char str[256];
+//            int_to_string(ptr[i], str);
+//            print_string(str);
+        }
+//        print_nl();
+    }
+    return ptr;
+}

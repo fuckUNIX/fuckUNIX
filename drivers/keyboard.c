@@ -4,7 +4,7 @@
 #include "../cpu/isr.h"
 #include "display.h"
 #include "../kernel/util.h"
-#include "../kernel/kernel.h"
+#include "../kernel/fuckUNIX.h"
 
 #define BACKSPACE 0x0E
 #define ENTER 0x1C

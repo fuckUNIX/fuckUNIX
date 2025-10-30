@@ -13,4 +13,4 @@ jobs:
         run: sudo apt-get -y install -y gcc make nasm
 
       - name: Build
-        run: make os-image.bin
+        run: make

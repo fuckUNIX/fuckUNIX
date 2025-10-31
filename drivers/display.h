@@ -10,6 +10,12 @@
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
 
+#define BOX_WIDTH 40
+#define BOX_HEIGHT 5
+#define BOX_CHAR_BORDER '/'
+#define BOX_CHAR_VERTICAL '|'
+#define BOX_CHAR_HORIZONTAL '-'
+
 /* Public kernel API */
 void print_string(char *string);
 
@@ -25,4 +31,6 @@ void print_backspace();
 void print_hex_byte(uint8_t b);
 void print_hex(uint8_t *data, int length);
 
-void print_boxed(char *text);
+// new msgbox decleration
+
+void print_msgbox(char *text);

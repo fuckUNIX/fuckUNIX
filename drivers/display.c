@@ -23,29 +23,6 @@ void print_hex(uint8_t *data, int length) {
     }
 }
 
-// prints the text but in a box
-void print_boxed(char *text) {
-    int len = strlen(text);
-
-    // Print top border
-    for (int i = 0; i < len + 4; i++) {
-        print_string("-");
-    }
-    print_nl();
-
-    // Print middle line with text
-    print_string("| ");
-    print_string(text);
-    print_string(" |");
-    print_nl();
-
-    // Print bottom border
-    for (int i = 0; i < len + 4; i++) {
-        print_string("-");
-    }
-    print_nl();
-}
-
 void set_cursor(int offset) {
     offset /= 2;
     port_byte_out(REG_SCREEN_CTRL, 14);
@@ -136,4 +113,48 @@ void print_backspace() {
     int newCursor = get_cursor() - 2;
     set_char_at_video_memory(' ', newCursor);
     set_cursor(newCursor);
+}
+
+// DEPRICATED!!!
+// Prints text in the middle of the screen in a message box.
+void print_msgbox(char *text) {
+    int startx = (MAX_COLS - BOX_WIDTH) / 2;
+    int starty = (MAX_ROWS - BOX_HEIGHT) / 2;
+    int offset;
+
+    // Draw box
+    for (int y = 0; y < BOX_HEIGHT; y++) {
+        for (int x = 0; x < BOX_WIDTH; x++) {
+            offset = 2 * ((starty + y) * MAX_COLS + (startx + x));
+
+            if (y == 0) 
+                set_char_at_video_memory(BOX_CHAR_BORDER, offset); // top border
+            else if (y == BOX_HEIGHT - 1)
+                set_char_at_video_memory('\\', offset);           // bottom border
+            else if (x == 0 || x == BOX_WIDTH - 1)
+                set_char_at_video_memory(BOX_CHAR_VERTICAL, offset); // vertical sides
+            else
+                set_char_at_video_memory(' ', offset);             // inside
+        }
+    }
+
+    // Print text in center
+    int msglen = 0;
+    while (text[msglen]) msglen++;
+    int msgx = startx + (BOX_WIDTH - msglen) / 2;
+    int msgy = starty + BOX_HEIGHT / 2;
+    offset = 2 * (msgy * MAX_COLS + msgx);
+    for (int i = 0; i < msglen; i++) {
+        set_char_at_video_memory(text[i], offset + i * 2);
+    }
+
+    delay(1000);
+
+    // Optional: clear box after delay
+    for (int y = 0; y < BOX_HEIGHT; y++) {
+        for (int x = 0; x < BOX_WIDTH; x++) {
+            offset = 2 * ((starty + y) * MAX_COLS + (startx + x));
+            set_char_at_video_memory(' ', offset);
+        }
+    }
 }

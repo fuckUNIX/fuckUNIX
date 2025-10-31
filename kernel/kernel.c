@@ -17,15 +17,6 @@
 #include "util.h"
 #include "mem.h"
 
-
-#define boot_banner "--------------------------\n Welcome to fuckUNIX 1.0 \n--------------------------"
-#define PANIC_BUF_SIZE 128
-
-// prints the boot banner stored in the boot_banner variable
-void print_banner() { 
-    print_string(boot_banner);
-}
-
 // runs all the functions like init_keyboard()
 void load_drivers() {
     print_string("Installing interrupt service routines (ISRs).\n");
@@ -81,60 +72,20 @@ void alloc_memory() {
 
 // core kernel function
 void start_kernel() {
-    clear_screen(); // clears the screen
-
-    load_drivers(); // loads all the drivers
-
+    print_string("Loading FUCKUNIX 1.0!!"); // notify the user
+    load_drivers(); // load the drivers
     alloc_memory(); // allocate memory
-
-    clear_screen(); // clears again
-
-    print_banner(); // prints banner
-    print_string("\n>");
-}
-
+    clear_screen(); // clear the screen
+    print_string("Welcome to FUCKUNIX"); // now that we loaded notify the user again
+} // thats all we need to do!!
 
 // kernel api start
-//void khalt() {
-//    asm volatile("hlt");
-//}
-
-//void kpoweroff() {
-//    print_string("Powering off the PC\n"); // TODO Implement ACPI
-//    khalt();
-//}
-
-/*void kpanic(char *reason) {
-    char buffer[PANIC_BUF_SIZE];
-    int i = 0;
-
-    // Copy fixed string
-    char *fixed = "KERNEL PANIC!!!!! REASON: ";
-    while (fixed[i] != '\0') {
-        buffer[i] = fixed[i];
-        i++;
-    }
-
-    // Copy reason string
-    int j = 0;
-    while (reason[j] != '\0' && i < PANIC_BUF_SIZE - 1) {
-        buffer[i] = reason[j];
-        i++;
-        j++;
-    }
-
-    buffer[i] = '\0'; // null-terminate
-
-    clear_screen();
-    print_boxed(buffer);
-    khalt();
-}*/
 
 // do not use right now as in the future it will be removed!!
 void execute_command(char *input) {
     if (compare_string(input, "EXIT") == 0) {
         // stub!!
-        print_string("Not implemented!!!");
+        print_msgbox("Not implemented!!!");
         print_string("\n> ");
     }
     else if (compare_string(input, "") == 0) {

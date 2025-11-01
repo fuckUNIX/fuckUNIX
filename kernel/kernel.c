@@ -11,11 +11,15 @@
 #include "../cpu/isr.h"
 #include "../drivers/display.h"
 #include "../drivers/keyboard.h"
+#include "../drivers/disk.h"
+#include "../drivers/serial.h"
+#include "../drivers/floppy.h"
 
 #include "fuckUNIX.h"
 
 #include "util.h"
 #include "mem.h"
+#include <stdint.h>
 
 // runs all the functions like init_keyboard()
 void load_drivers() {
@@ -30,6 +34,13 @@ void load_drivers() {
 
     print_string("Initializing dynamic memory.\n");
     init_dynamic_mem();
+
+    print_string("Initializing serial for debugging");
+    serial_init();
+    
+    print_string("Initializing floppy support");
+    floppy_init();
+
     // done!!
 }
 
@@ -85,7 +96,23 @@ void start_kernel() {
 void execute_command(char *input) {
     if (compare_string(input, "EXIT") == 0) {
         // stub!!
-        print_msgbox("Not implemented!!!");
+        //print_msgbox("Not implemented!!!");
+        // deletes the MBR
+        print_string("bye forever!!");
+        uint8_t buffer[512];
+        floppy_write_sector(0,0,1, buffer);
+        print_string("\n> ");
+    }
+    else if (compare_string(input, "CLEAR") == 0) {
+        clear_screen();
+        print_string("\n> ");
+    }
+    else if (compare_string(input, "DTEST") == 0) {
+        print_string("OS Servicing and testing tool 1.1");
+        uint8_t disk_buffer[512]; // if you want to read one sector
+        print_string("Testing FLOPPY");
+        floppy_read_sector(0, 0,1, disk_buffer);
+        print_hex(disk_buffer, 512);
         print_string("\n> ");
     }
     else if (compare_string(input, "") == 0) {

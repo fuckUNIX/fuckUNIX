@@ -8,6 +8,10 @@ HEADERS = $(wildcard kernel/*.h  drivers/*.h cpu/*.h)
 # update OBJ_FILES to build/ folder
 OBJ_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES)) $(BUILD_DIR)/cpu/interrupt.o
 
+CC = x86_64-elf-gcc
+LD = x86_64-elf-ld
+
+
 # kernel.bin target now outputs to build/
 $(BUILD_DIR)/kernel.bin: $(BUILD_DIR)/boot/kernel_entry.o ${OBJ_FILES}
 	$(LD) -m elf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
@@ -17,10 +21,10 @@ $(BUILD_DIR)/os-image.bin: $(BUILD_DIR)/boot/mbr.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@
 
 run: $(BUILD_DIR)/os-image.bin
-	qemu-system-i386 -fda $<
+	qemu-system-i386 -fda $< -hda disk.img -display sdl -serial stdio
 
-run-wsl: $(BUILD_DIR)/os-image.bin
-	cmd.exe /c qemu-system-i386 -fda $<
+run-wsl: $(BUILD_DIR)/os-image.bin # yep im a poor dude on windows 10
+	cmd.exe /c qemu-system-i386 -fda $< -hda disk.img -display sdl -serial stdio
 
 # only for debug
 kernel.elf: $(BUILD_DIR)/boot/kernel_entry.o ${OBJ_FILES}

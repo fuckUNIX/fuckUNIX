@@ -1,41 +1,73 @@
-// drivers/disk.c
-
-#include "disk.h"
-#include "ports.h"
 #include <stdint.h>
+#include "ports.h"
 
-// Reads sectors from primary ATA drive using LBA
-// lba: Logical Block Address
-// count: number of sectors (1-255)
-// buffer: pointer to memory to store sector data
-void ata_lba_read(uint32_t lba, uint8_t count, uint8_t *buffer) {
-    // Only 28-bit LBA supported here
-    lba &= 0x0FFFFFFF;
+#define ATA_PRIMARY       0x80
+#define ATA_DATA          (ATA_PRIMARY + 0)
+#define ATA_ERROR         (ATA_PRIMARY + 1)
+#define ATA_SECCOUNT0     (ATA_PRIMARY + 2)
+#define ATA_LBA0          (ATA_PRIMARY + 3)
+#define ATA_LBA1          (ATA_PRIMARY + 4)
+#define ATA_LBA2          (ATA_PRIMARY + 5)
+#define ATA_DRIVE         (ATA_PRIMARY + 6)
+#define ATA_STATUS        (ATA_PRIMARY + 7)
+#define ATA_COMMAND       (ATA_PRIMARY + 7)
 
-    // Drive/head register: 0xE0 for master, plus bits 24-27 of LBA
-    port_byte_out(0x1F6, 0xE0 | ((lba >> 24) & 0x0F));
+#define ATA_CMD_READ      0x20
+#define ATA_CMD_WRITE     0x30
+#define ATA_CMD_FLUSH     0xE7
+#define ATA_DRIVE_MASTER  0xE0
 
-    // Sector count
-    port_byte_out(0x1F2, count);
+// Wait until BSY=0
+static inline void ata_wait_busy(void) {
+    while (port_byte_in(ATA_STATUS) & 0x80);
+}
 
-    // LBA low/mid/high bytes
-    port_byte_out(0x1F3, (uint8_t)(lba & 0xFF));
-    port_byte_out(0x1F4, (uint8_t)((lba >> 8) & 0xFF));
-    port_byte_out(0x1F5, (uint8_t)((lba >> 16) & 0xFF));
+// Wait until DRQ=1 (ready for data transfer)
+static inline void ata_wait_drq(void) {
+    while (!(port_byte_in(ATA_STATUS) & 0x08));
+}
 
-    // Command: read sectors with retry
-    port_byte_out(0x1F7, 0x20);
+// Read one 512-byte sector (LBA 0–28-bit range)
+void ata_read_sector(uint32_t lba, uint8_t *buffer) {
+    ata_wait_busy();
 
-    // Wait until the drive sets DRQ (bit 3)
-    while (!(port_byte_in(0x1F7) & 0x08));
+    port_byte_out(ATA_DRIVE, ATA_DRIVE_MASTER | ((lba >> 24) & 0x0F));
+    port_byte_out(ATA_SECCOUNT0, 1);
+    port_byte_out(ATA_LBA0, (uint8_t)(lba));
+    port_byte_out(ATA_LBA1, (uint8_t)(lba >> 8));
+    port_byte_out(ATA_LBA2, (uint8_t)(lba >> 16));
+    port_byte_out(ATA_COMMAND, ATA_CMD_READ);
 
-    // Read data: 256 words per sector
-    for (int s = 0; s < count; s++) {
-        for (int i = 0; i < 256; i++) {
-            uint16_t word = port_word_in(0x1F0);
-            buffer[i*2]   = word & 0xFF;
-            buffer[i*2+1] = (word >> 8) & 0xFF;
-        }
-        buffer += 512; // move buffer pointer to next sector
+    ata_wait_busy();
+    ata_wait_drq();
+
+    for (int i = 0; i < 256; i++) {
+        uint16_t data = port_word_in(ATA_DATA);
+        buffer[i * 2]     = data & 0xFF;
+        buffer[i * 2 + 1] = data >> 8;
     }
+}
+
+// Write one 512-byte sector (LBA 0–28-bit range)
+void ata_write_sector(uint32_t lba, uint8_t *buffer) {
+    ata_wait_busy();
+
+    port_byte_out(ATA_DRIVE, ATA_DRIVE_MASTER | ((lba >> 24) & 0x0F));
+    port_byte_out(ATA_SECCOUNT0, 1);
+    port_byte_out(ATA_LBA0, (uint8_t)(lba));
+    port_byte_out(ATA_LBA1, (uint8_t)(lba >> 8));
+    port_byte_out(ATA_LBA2, (uint8_t)(lba >> 16));
+    port_byte_out(ATA_COMMAND, ATA_CMD_WRITE);
+
+    ata_wait_busy();
+    ata_wait_drq();
+
+    for (int i = 0; i < 256; i++) {
+        uint16_t data = (uint16_t)buffer[i * 2] | ((uint16_t)buffer[i * 2 + 1] << 8);
+        port_word_out(ATA_DATA, data);
+    }
+
+    // Flush write cache (important for real drives)
+    port_byte_out(ATA_COMMAND, ATA_CMD_FLUSH);
+    ata_wait_busy();
 }

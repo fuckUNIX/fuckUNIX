@@ -4,6 +4,8 @@
 #include "../kernel/mem.h"
 #include "../kernel/util.h"
 
+#include "../drivers/serial.h"
+
 static char hex_chars[] = "0123456789ABCDEF";
 
 // prints one hex byte
@@ -12,6 +14,7 @@ void print_hex_byte(uint8_t b) {
     hex[0] = hex_chars[(b >> 4) & 0x0F];
     hex[1] = hex_chars[b & 0x0F];
     print_string(hex);
+    serial_write_string(hex);
 }
 
 // prints hex data of a certain lenght
@@ -74,6 +77,7 @@ int scroll_ln(int offset) {
 /*
  * TODO:
  * - handle illegal offset (print error message somewhere)
+ * - add optinal serial
  */
 void print_string(char *string) {
     int offset = get_cursor();
@@ -90,6 +94,7 @@ void print_string(char *string) {
         }
         i++;
     }
+    serial_write_string(string);
     set_cursor(offset);
 }
 

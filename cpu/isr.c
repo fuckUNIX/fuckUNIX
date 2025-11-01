@@ -129,15 +129,13 @@ void register_interrupt_handler(uint8_t n, isr_t handler) {
 }
 
 void irq_handler(registers_t *r) {
-    /* Handle the interrupt in a more modular way */
-    if (interrupt_handlers[r->int_no] != 0) {
-        isr_t handler = interrupt_handlers[r->int_no];
-        handler(r);
-    }
+    /* Call custom handler if installed */
+    if (interrupt_handlers[r->int_no])
+        interrupt_handlers[r->int_no](r);
 
-    // EOI
-    if (r->int_no >= 40) {
-        port_byte_out(0xA0, 0x20); /* follower */
-    }
-    port_byte_out(0x20, 0x20); /* leader */
+    /* Send EOI */
+    if (r->int_no >= 40) // IRQ8–15 -> slave PIC
+        port_byte_out(0xA0, 0x20); // send EOI to slave first
+
+    port_byte_out(0x20, 0x20); // always send EOI to master
 }

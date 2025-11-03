@@ -27,6 +27,7 @@ static inline void ata_wait_drq(void) {
     while (!(port_byte_in(ATA_STATUS) & 0x08));
 }
 
+
 // Read one 512-byte sector (LBA 0–28-bit range)
 void ata_read_sector(uint32_t lba, uint8_t *buffer) {
     ata_wait_busy();
@@ -70,4 +71,9 @@ void ata_write_sector(uint32_t lba, uint8_t *buffer) {
     // Flush write cache (important for real drives)
     port_byte_out(ATA_COMMAND, ATA_CMD_FLUSH);
     ata_wait_busy();
+}
+
+void ata_read_sectors(uint32_t lba, uint32_t count, void *buffer) {
+    for (uint32_t i = 0; i < count; i++)
+        ata_read_sector(lba + i, (uint8_t*)buffer + i * 512);
 }

@@ -13,6 +13,13 @@ void memory_copy(uint8_t *source, uint8_t *dest, uint32_t nbytes) {
     }
 }
 
+int memory_compare(uint8_t *a, uint8_t *b, uint32_t len) {
+    for (uint32_t i = 0; i < len; i++)
+        if (a[i] != b[i]) return 1; // not equal
+    return 0; // equal
+}
+
+
 /*
  * The following code is based on code licensed under MIT licence
  * and thus also licensed under MIT license I guess?

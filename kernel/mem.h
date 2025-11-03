@@ -7,6 +7,8 @@
 
 void memory_copy(uint8_t *source, uint8_t *dest, uint32_t nbytes);
 
+int memory_compare(uint8_t *a, uint8_t *b, uint32_t len);
+
 void init_dynamic_mem();
 
 void print_dynamic_node_size();

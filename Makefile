@@ -21,11 +21,11 @@ $(BUILD_DIR)/os-image.bin: $(BUILD_DIR)/boot/mbr.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@
 
 run: $(BUILD_DIR)/os-image.bin
-	qemu-system-i386 -fda $< -hda disk.img -display sdl -serial stdio
+	qemu-system-i386 -fda $< -hda disk.img -display sdl -boot a
 
 run-wsl: $(BUILD_DIR)/os-image.bin # yep im a poor dude on windows 10
-	cmd.exe /c qemu-system-i386 -fda $< -hda disk.img -display sdl -serial stdio
-
+	cmd.exe /c qemu-system-i386 -fda $< -hda disk.img -display sdl -boot a 
+# removed serial so we dont spam the terminal
 # only for debug
 kernel.elf: $(BUILD_DIR)/boot/kernel_entry.o ${OBJ_FILES}
 	$(LD) -m elf_i386 -o $@ -Ttext 0x1000 $^

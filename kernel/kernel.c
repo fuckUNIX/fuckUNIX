@@ -15,6 +15,7 @@
 #include "../drivers/serial.h"
 #include "../drivers/floppy.h"
 #include "../drivers/fuckFAT.h"
+#include "../drivers/audio.h"
 
 #include "fuckUNIX.h"
 
@@ -118,6 +119,12 @@ void execute_command(char *input) {
         uint8_t file_buffer[64*1024];
         readfile_fuckFAT("test.txt",file_buffer);
         //print_hex(file_buffer, 64*1024);
+        print_string("\n> ");
+    }
+    else if (compare_string(input, "BEEP") == 0) {
+        beep(1000);
+        beep(1600);
+        beep(9000);
         print_string("\n> ");
     }
     else if (compare_string(input, "") == 0) {

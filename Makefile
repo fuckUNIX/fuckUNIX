@@ -2,8 +2,8 @@
 BUILD_DIR := build
 
 # detect all .o files based on their .c source
-C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c)
-HEADERS = $(wildcard kernel/*.h  drivers/*.h cpu/*.h)
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c )
+HEADERS = $(wildcard kernel/*.h  drivers/*.h cpu/*.h )
 
 # update OBJ_FILES to build/ folder
 OBJ_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES)) $(BUILD_DIR)/cpu/interrupt.o
@@ -21,10 +21,10 @@ $(BUILD_DIR)/os-image.bin: $(BUILD_DIR)/boot/mbr.bin $(BUILD_DIR)/kernel.bin
 	cat $^ > $@
 
 run: $(BUILD_DIR)/os-image.bin
-	qemu-system-i386 -fda $< -hda disk.img -display sdl -boot a
+	qemu-system-i386 -fda $< -hda disk.img -display sdl -boot a -audiodev pa,id=speaker -machine pcspk-audiodev=speaker
 
 run-wsl: $(BUILD_DIR)/os-image.bin # yep im a poor dude on windows 10
-	cmd.exe /c qemu-system-i386 -fda $< -hda disk.img -display sdl -boot a 
+	cmd.exe /c qemu-system-i386 -fda $< -hda disk.img -display sdl -boot a -machine pcspk-audiodev=speaker -audiodev sdl,id=speaker
 # removed serial so we dont spam the terminal
 # only for debug
 kernel.elf: $(BUILD_DIR)/boot/kernel_entry.o ${OBJ_FILES}

@@ -2,8 +2,8 @@
 BUILD_DIR := build
 
 # detect all .o files based on their .c source
-C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c )
-HEADERS = $(wildcard kernel/*.h  drivers/*.h cpu/*.h )
+C_SOURCES = $(wildcard kernel/*.c kernel/*/*.c drivers/*.c cpu/*.c )
+HEADERS = $(wildcard kernel/*.h kernel/*/*.h drivers/*.h cpu/*.h )
 
 # update OBJ_FILES to build/ folder
 OBJ_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES)) $(BUILD_DIR)/cpu/interrupt.o

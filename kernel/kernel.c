@@ -14,8 +14,8 @@
 #include "../drivers/disk.h"
 #include "../drivers/serial.h"
 #include "../drivers/floppy.h"
-#include "../drivers/fuckFAT.h"
 #include "../drivers/audio.h"
+#include "./userspace/userspace.h"
 
 #include "fuckUNIX.h"
 
@@ -43,8 +43,8 @@ void load_drivers() {
     print_string("Initializing floppy support");
     floppy_init();
 
-    print_string("Inizializing fuckFAT support");
-    init_fuckFAT();
+    print_string("Initializing userspace.");
+    init_userspace();
 
     // done!!
 }
@@ -117,7 +117,6 @@ void execute_command(char *input) {
         print_hex(disk_buffer, 512);
         print_string("Testing FAT12");
         uint8_t file_buffer[64*1024];
-        readfile_fuckFAT("test.txt",file_buffer);
         //print_hex(file_buffer, 64*1024);
         print_string("\n> ");
     }

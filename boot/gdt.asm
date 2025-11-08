@@ -23,6 +23,25 @@ gdt_data:
     db 11001111b
     db 0x0
 
+; --- User code segment (DPL=3) ---
+gdt_user_code:
+    dw 0xffff        ; segment limit low
+    dw 0x0           ; base low
+    db 0x0           ; base mid
+    db 10011010b     ; flags: present=1, DPL=3, code segment, executable=1, readable=1
+    db 11001111b     ; flags: granularity=1, 32-bit=1, limit high bits
+    db 0x0           ; base high
+
+; --- User data segment (DPL=3) ---
+gdt_user_data:
+    dw 0xffff
+    dw 0x0
+    db 0x0
+    db 10010010b     ; flags: present=1, DPL=3, data segment, writable=1
+    db 11001111b
+    db 0x0
+
+
 gdt_end:
 
 ; GDT descriptor
@@ -33,3 +52,5 @@ gdt_descriptor:
 ; define some constants for later use
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
+USER_CODE_SEG equ gdt_user_code - gdt_start
+USER_DATA_SEG equ gdt_user_data - gdt_start
